@@ -3,12 +3,15 @@
 //! This module contains the ICS-27 packet data and acknowledgement types.
 
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{to_json_binary, CosmosMsg, Env, IbcMsg, IbcTimeout, StdError, StdResult};
+use cosmwasm_std::{
+    to_json_binary, Binary, CosmosMsg, Env, IbcMsg, IbcTimeout, StdError, StdResult,
+};
 
 pub use cosmos_sdk_proto::ibc::applications::interchain_accounts::v1::CosmosTx;
 use cosmos_sdk_proto::traits::Message;
+use ethabi::Token;
 
-use crate::types::cosmos_msg::convert_to_proto_any;
+use crate::types::{cosmos_msg::convert_to_proto_any, evm_msg::EVMMessage};
 
 use super::metadata::TxEncoding;
 
@@ -98,12 +101,18 @@ impl IcaPacketData {
         }
     }
 
+    /// Creates a new [`IcaPacketData`] from a set of evm transactions
+    pub fn from_evm_msg(msg: EVMMessage, memo: Option<String>) -> StdResult<Self> {
+        let data = msg.encode();
+        Ok(Self::new(data, memo))
+    }
+
     /// Creates an [`IbcMsg::SendPacket`] message from the [`IcaPacketData`]
     ///
     /// # Errors
     ///
     /// Returns an error if the [`IcaPacketData`] cannot be serialized to JSON.
-    pub fn to_ibc_msg(
+    pub fn to_ibc_evm_msg(
         &self,
         env: &Env,
         channel_id: impl Into<String>,
@@ -118,6 +127,46 @@ impl IcaPacketData {
             data: to_json_binary(&self)?,
             timeout: IbcTimeout::with_timestamp(timeout_timestamp),
         })
+    }
+
+    /// Creates an [`IbcMsg::SendPacket`] message from the [`IcaPacketData`]
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the [`IcaPacketData`] cannot be serialized to JSON.
+    pub fn to_ibc_msg(
+        &self,
+        env: &Env,
+        evm: bool,
+        channel_id: impl Into<String>,
+        timeout_seconds: Option<u64>,
+    ) -> StdResult<IbcMsg> {
+        let timeout_timestamp = env
+            .block
+            .time
+            .plus_seconds(timeout_seconds.unwrap_or(DEFAULT_TIMEOUT_SECONDS));
+
+        let data = if evm {
+            Binary(ethabi::encode(&[self.into()]))
+        } else {
+            to_json_binary(&self)?
+        };
+
+        Ok(IbcMsg::SendPacket {
+            channel_id: channel_id.into(),
+            timeout: IbcTimeout::with_timestamp(timeout_timestamp),
+            data,
+        })
+    }
+}
+
+impl Into<Token> for &IcaPacketData {
+    fn into(self) -> Token {
+        Token::Tuple(vec![
+            Token::Uint(self.r#type.into()),
+            Token::Bytes(self.data.clone()),
+            Token::String(self.memo.clone().unwrap_or("".to_string())),
+        ])
     }
 }
 

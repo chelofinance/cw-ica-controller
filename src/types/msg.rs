@@ -5,6 +5,8 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::CosmosMsg;
 
+use super::evm_msg::EVMMessage;
+
 /// The message to instantiate the ICA controller contract.
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -49,6 +51,18 @@ pub enum ExecuteMsg {
         packet_memo: Option<String>,
         /// Optional timeout in seconds to include with the ibc packet.
         /// If not specified, the [default timeout](crate::ibc::types::packet::DEFAULT_TIMEOUT_SECONDS) is used.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        timeout_seconds: Option<u64>,
+    },
+    /// This message specifies how to send an ICA account tx to an EVM chain
+    SendEVMMsgs {
+        ///
+        messages: EVMMessage,
+        ///
+        #[serde(skip_serializing_if = "Option::is_none")]
+        packet_memo: Option<String>,
+        ///
+        ///
         #[serde(skip_serializing_if = "Option::is_none")]
         timeout_seconds: Option<u64>,
     },

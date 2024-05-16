@@ -69,6 +69,11 @@ pub fn execute(
             packet_memo,
             timeout_seconds,
         } => execute::send_cosmos_msgs(deps, env, info, messages, packet_memo, timeout_seconds),
+        ExecuteMsg::SendEVMMsgs {
+            messages,
+            packet_memo,
+            timeout_seconds,
+        } => execute::send_evm_messages(deps, env, info, messages, packet_memo, timeout_seconds),
         ExecuteMsg::UpdateOwnership(action) => execute::update_ownership(deps, env, info, action),
     }
 }
@@ -101,7 +106,10 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
 mod execute {
     use cosmwasm_std::{CosmosMsg, IbcMsg};
 
-    use crate::{ibc::types::packet::IcaPacketData, types::msg::options::ChannelOpenInitOptions};
+    use crate::{
+        ibc::types::packet::IcaPacketData,
+        types::{evm_msg::EVMMessage, msg::options::ChannelOpenInitOptions},
+    };
 
     use super::{
         new_ica_channel_open_init_cosmos_msg, state, ContractError, DepsMut, Env, MessageInfo,
@@ -167,6 +175,28 @@ mod execute {
 
     /// Sends an array of [`CosmosMsg`] to the ICA host.
     #[allow(clippy::needless_pass_by_value)]
+    pub fn send_evm_messages(
+        deps: DepsMut,
+        env: Env,
+        info: MessageInfo,
+        messages: EVMMessage,
+        packet_memo: Option<String>,
+        timeout_seconds: Option<u64>,
+    ) -> Result<Response, ContractError> {
+        cw_ownable::assert_owner(deps.storage, &info.sender)?;
+
+        let contract_state = state::STATE.load(deps.storage)?;
+        let ica_info = contract_state.get_ica_info()?;
+
+        let ica_packet = IcaPacketData::from_evm_msg(messages, packet_memo)?;
+        let send_packet_msg =
+            ica_packet.to_ibc_msg(&env, true, ica_info.channel_id, timeout_seconds)?;
+
+        Ok(Response::default().add_message(send_packet_msg))
+    }
+
+    /// Sends an array of [`CosmosMsg`] to the ICA host.
+    #[allow(clippy::needless_pass_by_value)]
     pub fn send_cosmos_msgs(
         deps: DepsMut,
         env: Env,
@@ -186,7 +216,8 @@ mod execute {
             packet_memo,
             &ica_info.ica_address,
         )?;
-        let send_packet_msg = ica_packet.to_ibc_msg(&env, ica_info.channel_id, timeout_seconds)?;
+        let send_packet_msg =
+            ica_packet.to_ibc_msg(&env, false, ica_info.channel_id, timeout_seconds)?;
 
         Ok(Response::default().add_message(send_packet_msg))
     }
