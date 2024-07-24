@@ -6,9 +6,9 @@ use cosmwasm_std::{
     IbcChannelConnectMsg, IbcChannelOpenMsg, IbcChannelOpenResponse,
 };
 
-use super::types::{keys, metadata::IcaMetadata};
+use super::types::metadata::IcaMetadata;
 use crate::types::{
-    state::{self, ChannelState},
+    state::{self},
     ContractError,
 };
 
@@ -85,11 +85,11 @@ pub fn ibc_channel_close(
 }
 
 mod ibc_channel_open {
-    use crate::types::callbacks::IcaControllerCallbackMsg;
+    use crate::types::state::debug;
 
     use super::{
-        keys, state, ChannelState, ContractError, DepsMut, Ibc3ChannelOpenResponse,
-        IbcBasicResponse, IbcChannel, IbcChannelOpenResponse, IcaMetadata,
+        state, ContractError, DepsMut, Ibc3ChannelOpenResponse, IbcBasicResponse, IbcChannel,
+        IbcChannelOpenResponse, IcaMetadata,
     };
 
     /// Handles the `OpenInit` part of the IBC handshake.
@@ -98,6 +98,12 @@ mod ibc_channel_open {
         deps: DepsMut,
         channel: IbcChannel,
     ) -> Result<IbcChannelOpenResponse, ContractError> {
+        debug(deps.storage, "init".to_string())?;
+        debug(
+            deps.storage,
+            serde_json_wasm::to_string(&channel).unwrap_or("str err".to_string()),
+        )?;
+
         if !state::ALLOW_CHANNEL_OPEN_INIT
             .load(deps.storage)
             .unwrap_or_default()
@@ -107,11 +113,12 @@ mod ibc_channel_open {
 
         state::ALLOW_CHANNEL_OPEN_INIT.save(deps.storage, &false)?;
 
-        // Validate the host port
-        if channel.counterparty_endpoint.port_id != keys::HOST_PORT_ID {
-            return Err(ContractError::InvalidHostPort);
-        }
+        // Validate the host port on EVM this should change
+        //if channel.counterparty_endpoint.port_id != keys::HOST_PORT_ID {
+        //return Err(ContractError::InvalidHostPort);
+        //}
 
+        debug(deps.storage, "metadata".to_string())?;
         // serde::Deserialize the metadata
         let metadata: IcaMetadata = if channel.version.is_empty() {
             // if empty, use create new metadata.
@@ -123,10 +130,19 @@ mod ibc_channel_open {
                 )
             })?
         };
-        metadata.validate(&channel)?;
+        metadata.validate(deps.storage, &channel)?;
 
+        debug(deps.storage, "state".to_string())?;
         // Check if the channel is already exists
         if let Some(channel_state) = state::CHANNEL_STATE.may_load(deps.storage)? {
+            debug(
+                deps.storage,
+                format!(
+                    "{}={}",
+                    "state_open".to_string(),
+                    channel_state.is_open().to_string()
+                ),
+            )?;
             // this contract can only store one active channel
             // if the channel is already open, return an error
             if channel_state.is_open() {
@@ -144,61 +160,74 @@ mod ibc_channel_open {
     #[allow(clippy::needless_pass_by_value)]
     pub fn on_acknowledgement(
         deps: DepsMut,
-        mut channel: IbcChannel,
+        channel: IbcChannel,
         counterparty_version: String,
     ) -> Result<IbcBasicResponse, ContractError> {
-        let mut state = state::STATE.load(deps.storage)?;
+        //let mut state = state::STATE.load(deps.storage)?;
+        debug(
+            deps.storage,
+            format!(
+                "{}-{}",
+                "ack".to_string(),
+                serde_json_wasm::to_string(&channel)?
+            ),
+        )?;
+        debug(
+            deps.storage,
+            format!("{}-{}", "ack_version".to_string(), counterparty_version),
+        )?;
 
         // portID cannot be host chain portID
         // this is not possible since it is wasm.CONTRACT_ADDRESS
         // but we check it anyway since this is a recreation of the go code
-        if channel.endpoint.port_id == keys::HOST_PORT_ID {
-            return Err(ContractError::InvalidControllerPort);
-        }
+        //if channel.endpoint.port_id == keys::HOST_PORT_ID {
+        //return Err(ContractError::InvalidControllerPort);
+        //}
 
         // serde::Deserialize the metadata
-        let metadata: IcaMetadata =
-            serde_json_wasm::from_str(&counterparty_version).map_err(|_| {
-                ContractError::UnknownDataType(
-                    "cannot unmarshal ICS-27 interchain accounts metadata".to_string(),
-                )
-            })?;
-        metadata.validate(&channel)?;
+        //let metadata: IcaMetadata =
+        //serde_json_wasm::from_str(&counterparty_version).map_err(|_| {
+        //ContractError::UnknownDataType(
+        //"cannot unmarshal ICS-27 interchain accounts metadata".to_string(),
+        //)
+        //})?;
+        //metadata.validate(deps.storage, &channel)?;
 
-        // Check if the address is empty
-        if metadata.address.is_empty() {
-            return Err(ContractError::InvalidIcaAddress);
-        }
+        //// Check if the address is empty
+        //if metadata.address.is_empty() {
+        //return Err(ContractError::InvalidIcaAddress);
+        //}
 
-        // update state with the ica info
-        state.set_ica_info(
-            &metadata.address,
-            &channel.endpoint.channel_id,
-            metadata.encoding.clone(),
-        );
-        state::STATE.save(deps.storage, &state)?;
+        //// update state with the ica info
+        //state.set_ica_info(
+        //&metadata.address,
+        //&channel.endpoint.channel_id,
+        //metadata.encoding.clone(),
+        //);
+        //state::STATE.save(deps.storage, &state)?;
 
-        channel.version = counterparty_version;
+        //channel.version = counterparty_version;
 
-        // Save the channel state
-        state::CHANNEL_STATE.save(
-            deps.storage,
-            &ChannelState::new_open_channel(channel.clone()),
-        )?;
+        //// Save the channel state
+        //state::CHANNEL_STATE.save(
+        //deps.storage,
+        //&ChannelState::new_open_channel(channel.clone()),
+        //)?;
 
-        // make callback if needed
-        if let Some(callback_address) = state.callback_address {
-            let callback_msg = IcaControllerCallbackMsg::OnChannelOpenAckCallback {
-                channel,
-                ica_address: metadata.address,
-                tx_encoding: metadata.encoding,
-            }
-            .into_cosmos_msg(callback_address)?;
+        //// make callback if needed
+        //if let Some(callback_address) = state.callback_address {
+        //let callback_msg = IcaControllerCallbackMsg::OnChannelOpenAckCallback {
+        //channel,
+        //ica_address: metadata.address,
+        //tx_encoding: metadata.encoding,
+        //}
+        //.into_cosmos_msg(callback_address)?;
 
-            Ok(IbcBasicResponse::default().add_message(callback_msg))
-        } else {
-            Ok(IbcBasicResponse::default())
-        }
+        //Ok(IbcBasicResponse::default().add_message(callback_msg))
+        //} else {
+        //Ok(IbcBasicResponse::default())
+        //}
+        Ok(IbcBasicResponse::default())
     }
 }
 

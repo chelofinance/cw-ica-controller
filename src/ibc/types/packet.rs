@@ -98,6 +98,9 @@ impl IcaPacketData {
             TxEncoding::Proto3Json => StdResult::Err(StdError::generic_err(
                 "unsupported encoding: proto3json".to_string(),
             )),
+            TxEncoding::ABI => {
+                unimplemented!();
+            }
         }
     }
 

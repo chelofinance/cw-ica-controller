@@ -6,9 +6,11 @@
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
     from_json, DepsMut, Env, IbcBasicResponse, IbcPacketAckMsg, IbcPacketReceiveMsg,
-    IbcPacketTimeoutMsg, IbcReceiveResponse, Never,
+    IbcPacketTimeoutMsg, IbcReceiveResponse,
 };
+use ethabi::ParamType;
 
+use crate::types::state::debug;
 use crate::types::{state, ContractError};
 
 use super::types::{events, packet::acknowledgement::Data as AcknowledgementData};
@@ -66,17 +68,37 @@ pub fn ibc_packet_timeout(
 }
 
 /// Implements the IBC module's `OnRecvPacket` handler.
-/// Always panics because the ICA controller cannot receive packets.
+/// It used to panic because the ICA controller cannot receive packets.
+/// Instead we use it to receive the ICA address on EVM chains
 #[entry_point]
 #[allow(clippy::pedantic)]
 pub fn ibc_packet_receive(
-    _deps: DepsMut,
+    deps: DepsMut,
     _env: Env,
-    _msg: IbcPacketReceiveMsg,
-) -> Result<IbcReceiveResponse, Never> {
-    // An ICA controller cannot receive packets, so this is a panic.
-    // It must be implemented to satisfy the wasmd interface.
-    unreachable!("ICA controller cannot receive packets")
+    msg: IbcPacketReceiveMsg,
+) -> Result<IbcReceiveResponse, ContractError> {
+    debug(deps.storage, serde_json_wasm::to_string(&msg)?)?;
+    let mut state = state::STATE.load(deps.storage)?;
+    let packet = ethabi::decode(
+        &[
+            ParamType::Address,
+            ParamType::String,
+            ParamType::String,
+            ParamType::String,
+        ],
+        &msg.packet.data.0,
+    )
+    .unwrap_or(vec![]); //we dont revert to debug
+
+    if packet.len() > 0 {
+        state.set_ica_info(
+            &packet[0].clone().into_string().unwrap_or("err".to_string()),
+            &packet[1].clone().into_string().unwrap_or("err".to_string()),
+            super::types::metadata::TxEncoding::ABI,
+        );
+    }
+
+    Ok(IbcReceiveResponse::default())
 }
 
 mod ibc_packet_ack {

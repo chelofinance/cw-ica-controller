@@ -1,0 +1,315 @@
+cw-ica-controller v0.6.0 (/home/rafael/Desktop/work/chelo/ica-cont)
+├── cosmos-sdk-proto v0.20.0
+│   ├── prost v0.12.3
+│   │   ├── bytes v1.6.0
+│   │   │   └── serde v1.0.197
+│   │   │       └── serde_derive v1.0.197 (proc-macro)
+│   │   │           ├── proc-macro2 v1.0.79
+│   │   │           │   └── unicode-ident v1.0.12
+│   │   │           ├── quote v1.0.35
+│   │   │           │   └── proc-macro2 v1.0.79 (*)
+│   │   │           └── syn v2.0.55
+│   │   │               ├── proc-macro2 v1.0.79 (*)
+│   │   │               ├── quote v1.0.35 (*)
+│   │   │               └── unicode-ident v1.0.12
+│   │   └── prost-derive v0.12.3 (proc-macro)
+│   │       ├── anyhow v1.0.81
+│   │       ├── itertools v0.11.0
+│   │       │   └── either v1.10.0
+│   │       ├── proc-macro2 v1.0.79 (*)
+│   │       ├── quote v1.0.35 (*)
+│   │       └── syn v2.0.55 (*)
+│   ├── prost-types v0.12.3
+│   │   └── prost v0.12.3 (*)
+│   └── tendermint-proto v0.34.1
+│       ├── bytes v1.6.0 (*)
+│       ├── flex-error v0.4.4
+│       │   └── paste v1.0.14 (proc-macro)
+│       ├── num-derive v0.3.3 (proc-macro)
+│       │   ├── proc-macro2 v1.0.79 (*)
+│       │   ├── quote v1.0.35 (*)
+│       │   └── syn v1.0.109
+│       │       ├── proc-macro2 v1.0.79 (*)
+│       │       ├── quote v1.0.35 (*)
+│       │       └── unicode-ident v1.0.12
+│       ├── num-traits v0.2.18
+│       │   [build-dependencies]
+│       │   └── autocfg v1.1.0
+│       ├── prost v0.12.3 (*)
+│       ├── prost-types v0.12.3 (*)
+│       ├── serde v1.0.197 (*)
+│       ├── serde_bytes v0.11.14
+│       │   └── serde v1.0.197 (*)
+│       ├── subtle-encoding v0.5.1
+│       │   └── zeroize v1.7.0
+│       └── time v0.3.34
+│           ├── deranged v0.3.11
+│           │   └── powerfmt v0.2.0
+│           ├── num-conv v0.1.0
+│           ├── powerfmt v0.2.0
+│           ├── time-core v0.1.2
+│           └── time-macros v0.2.17 (proc-macro)
+│               ├── num-conv v0.1.0
+│               └── time-core v0.1.2
+├── cosmwasm-schema v1.5.3
+│   ├── cosmwasm-schema-derive v1.5.3 (proc-macro)
+│   │   ├── proc-macro2 v1.0.79 (*)
+│   │   ├── quote v1.0.35 (*)
+│   │   └── syn v1.0.109 (*)
+│   ├── schemars v0.8.16
+│   │   ├── dyn-clone v1.0.17
+│   │   ├── schemars_derive v0.8.16 (proc-macro)
+│   │   │   ├── proc-macro2 v1.0.79 (*)
+│   │   │   ├── quote v1.0.35 (*)
+│   │   │   ├── serde_derive_internals v0.26.0
+│   │   │   │   ├── proc-macro2 v1.0.79 (*)
+│   │   │   │   ├── quote v1.0.35 (*)
+│   │   │   │   └── syn v1.0.109 (*)
+│   │   │   └── syn v1.0.109 (*)
+│   │   ├── serde v1.0.197 (*)
+│   │   └── serde_json v1.0.114
+│   │       ├── itoa v1.0.10
+│   │       ├── ryu v1.0.17
+│   │       └── serde v1.0.197 (*)
+│   ├── serde v1.0.197 (*)
+│   ├── serde_json v1.0.114 (*)
+│   └── thiserror v1.0.58
+│       └── thiserror-impl v1.0.58 (proc-macro)
+│           ├── proc-macro2 v1.0.79 (*)
+│           ├── quote v1.0.35 (*)
+│           └── syn v2.0.55 (*)
+├── cosmwasm-std v1.5.3
+│   ├── base64 v0.21.7
+│   ├── bech32 v0.9.1
+│   ├── bnum v0.10.0
+│   ├── cosmwasm-crypto v1.5.3
+│   │   ├── digest v0.10.7
+│   │   │   ├── block-buffer v0.10.4
+│   │   │   │   └── generic-array v0.14.7
+│   │   │   │       ├── typenum v1.17.0
+│   │   │   │       └── zeroize v1.7.0
+│   │   │   │       [build-dependencies]
+│   │   │   │       └── version_check v0.9.4
+│   │   │   ├── const-oid v0.9.6
+│   │   │   ├── crypto-common v0.1.6
+│   │   │   │   ├── generic-array v0.14.7 (*)
+│   │   │   │   └── typenum v1.17.0
+│   │   │   └── subtle v2.5.0
+│   │   ├── ecdsa v0.16.9
+│   │   │   ├── der v0.7.8
+│   │   │   │   ├── const-oid v0.9.6
+│   │   │   │   └── zeroize v1.7.0
+│   │   │   ├── digest v0.10.7 (*)
+│   │   │   ├── elliptic-curve v0.13.8
+│   │   │   │   ├── base16ct v0.2.0
+│   │   │   │   ├── crypto-bigint v0.5.5
+│   │   │   │   │   ├── generic-array v0.14.7 (*)
+│   │   │   │   │   ├── rand_core v0.6.4
+│   │   │   │   │   │   └── getrandom v0.2.12
+│   │   │   │   │   │       ├── cfg-if v1.0.0
+│   │   │   │   │   │       └── libc v0.2.153
+│   │   │   │   │   ├── subtle v2.5.0
+│   │   │   │   │   └── zeroize v1.7.0
+│   │   │   │   ├── digest v0.10.7 (*)
+│   │   │   │   ├── ff v0.13.0
+│   │   │   │   │   ├── rand_core v0.6.4 (*)
+│   │   │   │   │   └── subtle v2.5.0
+│   │   │   │   ├── generic-array v0.14.7 (*)
+│   │   │   │   ├── group v0.13.0
+│   │   │   │   │   ├── ff v0.13.0 (*)
+│   │   │   │   │   ├── rand_core v0.6.4 (*)
+│   │   │   │   │   └── subtle v2.5.0
+│   │   │   │   ├── pkcs8 v0.10.2
+│   │   │   │   │   ├── der v0.7.8 (*)
+│   │   │   │   │   └── spki v0.7.3
+│   │   │   │   │       └── der v0.7.8 (*)
+│   │   │   │   ├── rand_core v0.6.4 (*)
+│   │   │   │   ├── sec1 v0.7.3
+│   │   │   │   │   ├── base16ct v0.2.0
+│   │   │   │   │   ├── der v0.7.8 (*)
+│   │   │   │   │   ├── generic-array v0.14.7 (*)
+│   │   │   │   │   ├── subtle v2.5.0
+│   │   │   │   │   └── zeroize v1.7.0
+│   │   │   │   ├── subtle v2.5.0
+│   │   │   │   └── zeroize v1.7.0
+│   │   │   ├── rfc6979 v0.4.0
+│   │   │   │   ├── hmac v0.12.1
+│   │   │   │   │   └── digest v0.10.7 (*)
+│   │   │   │   └── subtle v2.5.0
+│   │   │   ├── signature v2.2.0
+│   │   │   │   ├── digest v0.10.7 (*)
+│   │   │   │   └── rand_core v0.6.4 (*)
+│   │   │   └── spki v0.7.3 (*)
+│   │   ├── ed25519-zebra v3.1.0
+│   │   │   ├── curve25519-dalek v3.2.0
+│   │   │   │   ├── byteorder v1.5.0
+│   │   │   │   ├── digest v0.9.0
+│   │   │   │   │   └── generic-array v0.14.7 (*)
+│   │   │   │   ├── rand_core v0.5.1
+│   │   │   │   ├── subtle v2.5.0
+│   │   │   │   └── zeroize v1.7.0
+│   │   │   ├── hashbrown v0.12.3
+│   │   │   │   └── ahash v0.7.8
+│   │   │   │       ├── getrandom v0.2.12 (*)
+│   │   │   │       └── once_cell v1.19.0
+│   │   │   │       [build-dependencies]
+│   │   │   │       └── version_check v0.9.4
+│   │   │   ├── hex v0.4.3
+│   │   │   ├── rand_core v0.6.4 (*)
+│   │   │   ├── serde v1.0.197 (*)
+│   │   │   ├── sha2 v0.9.9
+│   │   │   │   ├── block-buffer v0.9.0
+│   │   │   │   │   └── generic-array v0.14.7 (*)
+│   │   │   │   ├── cfg-if v1.0.0
+│   │   │   │   ├── cpufeatures v0.2.12
+│   │   │   │   ├── digest v0.9.0 (*)
+│   │   │   │   └── opaque-debug v0.3.1
+│   │   │   └── zeroize v1.7.0
+│   │   ├── k256 v0.13.1
+│   │   │   ├── cfg-if v1.0.0
+│   │   │   ├── ecdsa v0.16.9 (*)
+│   │   │   ├── elliptic-curve v0.13.8 (*)
+│   │   │   ├── once_cell v1.19.0
+│   │   │   ├── sha2 v0.10.8
+│   │   │   │   ├── cfg-if v1.0.0
+│   │   │   │   ├── cpufeatures v0.2.12
+│   │   │   │   └── digest v0.10.7 (*)
+│   │   │   └── signature v2.2.0 (*)
+│   │   ├── rand_core v0.6.4 (*)
+│   │   └── thiserror v1.0.58 (*)
+│   ├── cosmwasm-derive v1.5.3 (proc-macro)
+│   │   └── syn v1.0.109 (*)
+│   ├── derivative v2.2.0 (proc-macro)
+│   │   ├── proc-macro2 v1.0.79 (*)
+│   │   ├── quote v1.0.35 (*)
+│   │   └── syn v1.0.109 (*)
+│   ├── forward_ref v1.0.0
+│   ├── hex v0.4.3
+│   ├── schemars v0.8.16 (*)
+│   ├── serde v1.0.197 (*)
+│   ├── serde-json-wasm v0.5.2
+│   │   └── serde v1.0.197 (*)
+│   ├── sha2 v0.10.8 (*)
+│   ├── static_assertions v1.1.0
+│   └── thiserror v1.0.58 (*)
+├── cw-ica-controller-derive v0.4.2 (proc-macro)
+│   ├── proc-macro2 v1.0.79 (*)
+│   ├── quote v1.0.35 (*)
+│   └── syn v1.0.109 (*)
+├── cw-ownable v0.5.1
+│   ├── cosmwasm-schema v1.5.3 (*)
+│   ├── cosmwasm-std v1.5.3 (*)
+│   ├── cw-address-like v1.0.4
+│   │   └── cosmwasm-std v1.5.3 (*)
+│   ├── cw-ownable-derive v0.5.1 (proc-macro)
+│   │   ├── proc-macro2 v1.0.79 (*)
+│   │   ├── quote v1.0.35 (*)
+│   │   └── syn v1.0.109 (*)
+│   ├── cw-storage-plus v1.2.0
+│   │   ├── cosmwasm-std v1.5.3 (*)
+│   │   ├── schemars v0.8.16 (*)
+│   │   └── serde v1.0.197 (*)
+│   ├── cw-utils v1.0.3
+│   │   ├── cosmwasm-schema v1.5.3 (*)
+│   │   ├── cosmwasm-std v1.5.3 (*)
+│   │   ├── cw2 v1.1.2
+│   │   │   ├── cosmwasm-schema v1.5.3 (*)
+│   │   │   ├── cosmwasm-std v1.5.3 (*)
+│   │   │   ├── cw-storage-plus v1.2.0 (*)
+│   │   │   ├── schemars v0.8.16 (*)
+│   │   │   ├── semver v1.0.22
+│   │   │   ├── serde v1.0.197 (*)
+│   │   │   └── thiserror v1.0.58 (*)
+│   │   ├── schemars v0.8.16 (*)
+│   │   ├── semver v1.0.22
+│   │   ├── serde v1.0.197 (*)
+│   │   └── thiserror v1.0.58 (*)
+│   └── thiserror v1.0.58 (*)
+├── cw-storage-plus v1.2.0 (*)
+├── cw2 v1.1.2 (*)
+├── ethabi v18.0.0
+│   ├── ethereum-types v0.14.1
+│   │   ├── fixed-hash v0.8.0
+│   │   │   ├── byteorder v1.5.0
+│   │   │   ├── rustc-hex v2.1.0
+│   │   │   └── static_assertions v1.1.0
+│   │   ├── primitive-types v0.12.2
+│   │   │   ├── fixed-hash v0.8.0 (*)
+│   │   │   └── uint v0.9.5
+│   │   │       ├── byteorder v1.5.0
+│   │   │       ├── crunchy v0.2.2
+│   │   │       ├── hex v0.4.3
+│   │   │       └── static_assertions v1.1.0
+│   │   └── uint v0.9.5 (*)
+│   ├── hex v0.4.3
+│   └── sha3 v0.10.8
+│       ├── digest v0.10.7 (*)
+│       └── keccak v0.1.5
+├── schemars v0.8.16 (*)
+├── semver v1.0.22
+├── serde v1.0.197 (*)
+├── serde-json-wasm v1.0.1
+│   └── serde v1.0.197 (*)
+└── thiserror v1.0.58 (*)
+[dev-dependencies]
+├── base64 v0.13.1
+├── cw-ica-controller v0.1.3
+│   ├── cosmos-sdk-proto v0.20.0 (*)
+│   ├── cosmwasm-schema v1.5.3 (*)
+│   ├── cosmwasm-std v1.5.3 (*)
+│   ├── cw-storage-plus v1.2.0 (*)
+│   ├── cw2 v1.1.2 (*)
+│   ├── schemars v0.8.16 (*)
+│   ├── semver v1.0.22
+│   ├── serde v1.0.197 (*)
+│   ├── serde-json-wasm v0.5.2 (*)
+│   └── thiserror v1.0.58 (*)
+├── cw-ica-controller v0.2.0
+│   ├── cosmos-sdk-proto v0.20.0 (*)
+│   ├── cosmwasm-schema v1.5.3 (*)
+│   ├── cosmwasm-std v1.5.3 (*)
+│   ├── cw-storage-plus v1.2.0 (*)
+│   ├── cw2 v1.1.2 (*)
+│   ├── schemars v0.8.16 (*)
+│   ├── semver v1.0.22
+│   ├── serde v1.0.197 (*)
+│   ├── serde-json-wasm v1.0.1 (*)
+│   └── thiserror v1.0.58 (*)
+├── cw-ica-controller v0.3.0
+│   ├── cosmos-sdk-proto v0.20.0 (*)
+│   ├── cosmwasm-schema v1.5.3 (*)
+│   ├── cosmwasm-std v1.5.3 (*)
+│   ├── cw-ownable v0.5.1 (*)
+│   ├── cw-storage-plus v1.2.0 (*)
+│   ├── cw2 v1.1.2 (*)
+│   ├── schemars v0.8.16 (*)
+│   ├── semver v1.0.22
+│   ├── serde v1.0.197 (*)
+│   ├── serde-json-wasm v1.0.1 (*)
+│   └── thiserror v1.0.58 (*)
+├── cw-ica-controller v0.4.2
+│   ├── cosmos-sdk-proto v0.20.0 (*)
+│   ├── cosmwasm-schema v1.5.3 (*)
+│   ├── cosmwasm-std v1.5.3 (*)
+│   ├── cw-ica-controller-derive v0.4.2 (proc-macro) (*)
+│   ├── cw-ownable v0.5.1 (*)
+│   ├── cw-storage-plus v1.2.0 (*)
+│   ├── cw2 v1.1.2 (*)
+│   ├── schemars v0.8.16 (*)
+│   ├── semver v1.0.22
+│   ├── serde v1.0.197 (*)
+│   ├── serde-json-wasm v1.0.1 (*)
+│   └── thiserror v1.0.58 (*)
+└── cw-ica-controller v0.5.0
+    ├── cosmos-sdk-proto v0.20.0 (*)
+    ├── cosmwasm-schema v1.5.3 (*)
+    ├── cosmwasm-std v1.5.3 (*)
+    ├── cw-ica-controller-derive v0.4.2 (proc-macro) (*)
+    ├── cw-ownable v0.5.1 (*)
+    ├── cw-storage-plus v1.2.0 (*)
+    ├── cw2 v1.1.2 (*)
+    ├── schemars v0.8.16 (*)
+    ├── semver v1.0.22
+    ├── serde v1.0.197 (*)
+    ├── serde-json-wasm v1.0.1 (*)
+    └── thiserror v1.0.58 (*)

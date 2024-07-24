@@ -74,6 +74,11 @@ pub fn execute(
             packet_memo,
             timeout_seconds,
         } => execute::send_evm_messages(deps, env, info, messages, packet_memo, timeout_seconds),
+        ExecuteMsg::SetIcaInfo {
+            ica_address,
+            channel,
+            encoding,
+        } => execute::set_ica_info(deps, env, ica_address, channel, encoding),
         ExecuteMsg::UpdateOwnership(action) => execute::update_ownership(deps, env, info, action),
     }
 }
@@ -86,6 +91,10 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetContractState {} => to_json_binary(&query::state(deps)?),
         QueryMsg::GetChannel {} => to_json_binary(&query::channel(deps)?),
         QueryMsg::Ownership {} => to_json_binary(&cw_ownable::get_ownership(deps.storage)?),
+        QueryMsg::Debug {} => {
+            let debug = state::DEBUG.load(deps.storage).unwrap_or(vec![]);
+            Ok(to_json_binary(&debug)?)
+        }
     }
 }
 
@@ -193,6 +202,20 @@ mod execute {
             ica_packet.to_ibc_msg(&env, true, ica_info.channel_id, timeout_seconds)?;
 
         Ok(Response::default().add_message(send_packet_msg))
+    }
+
+    pub fn set_ica_info(
+        deps: DepsMut,
+        _: Env,
+        ica_address: String,
+        channel_id: String,
+        encoding: crate::ibc::types::metadata::TxEncoding,
+    ) -> Result<Response, ContractError> {
+        let mut state = state::STATE.load(deps.storage)?;
+        state.set_ica_info(&ica_address, &channel_id, encoding);
+        state::STATE.save(deps.storage, &state)?;
+
+        Ok(Response::default())
     }
 
     /// Sends an array of [`CosmosMsg`] to the ICA host.

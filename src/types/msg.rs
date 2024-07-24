@@ -37,6 +37,15 @@ pub enum ExecuteMsg {
         #[serde(skip_serializing_if = "Option::is_none")]
         channel_open_init_options: Option<options::ChannelOpenInitOptions>,
     },
+    ///
+    SetIcaInfo {
+        ///
+        ica_address: String,
+        ///
+        channel: String,
+        ///
+        encoding: crate::ibc::types::metadata::TxEncoding,
+    },
     /// `CloseChannel` closes the IBC channel.
     CloseChannel {},
     /// `SendCosmosMsgs` converts the provided array of [`CosmosMsg`] to an ICA tx and sends them to the ICA host.
@@ -55,7 +64,7 @@ pub enum ExecuteMsg {
         timeout_seconds: Option<u64>,
     },
     /// This message specifies how to send an ICA account tx to an EVM chain
-    SendEVMMsgs {
+    SendEvmMsgs {
         ///
         messages: EVMMessage,
         ///
@@ -85,6 +94,9 @@ pub enum QueryMsg {
     /// GetContractState returns the contact's state.
     #[returns(crate::types::state::ContractState)]
     GetContractState {},
+    /// debug
+    #[returns(Vec<String>)]
+    Debug {},
 }
 
 /// The message to migrate this contract.

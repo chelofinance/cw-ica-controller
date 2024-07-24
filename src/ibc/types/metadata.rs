@@ -7,10 +7,10 @@
 //! interchain account.
 
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Deps, IbcChannel};
+use cosmwasm_std::{Deps, IbcChannel, Storage};
 
 use crate::types::{
-    state::{CHANNEL_OPEN_INIT_OPTIONS, CHANNEL_STATE},
+    state::{debug, CHANNEL_OPEN_INIT_OPTIONS, CHANNEL_STATE},
     ContractError,
 };
 
@@ -47,6 +47,9 @@ pub enum TxEncoding {
     /// `Proto3Json` is the json serialization of the CosmosSDK's Any.
     #[serde(rename = "proto3json")]
     Proto3Json,
+    /// `ABI` is the serialization of EVM chains.
+    #[serde(rename = "abi")]
+    ABI,
 }
 
 impl IcaMetadata {
@@ -116,25 +119,48 @@ impl IcaMetadata {
     /// # Errors
     ///
     /// Returns an error if the metadata is invalid.
-    pub fn validate(&self, channel: &IbcChannel) -> Result<(), ContractError> {
+    pub fn validate(
+        &self,
+        store: &mut dyn Storage,
+        channel: &IbcChannel,
+    ) -> Result<(), ContractError> {
+        debug(
+            store,
+            format!("{}-{}-{}", "version".to_string(), self.version, ICA_VERSION),
+        )?;
         if self.version != ICA_VERSION {
             return Err(ContractError::InvalidVersion {
                 expected: ICA_VERSION.to_string(),
                 actual: self.version.clone(),
             });
         }
+        debug(
+            store,
+            format!(
+                "{}-{}-{}",
+                "connection".to_string(),
+                self.controller_connection_id,
+                channel.connection_id
+            ),
+        )?;
         if self.controller_connection_id != channel.connection_id {
             return Err(ContractError::InvalidConnection);
         }
+        debug(
+            store,
+            format!("{}-{}", "encoding".to_string(), self.encoding.to_string()),
+        )?;
         if !matches!(self.encoding, TxEncoding::Protobuf) {
             return Err(ContractError::UnsupportedPacketEncoding(
                 self.encoding.to_string(),
             ));
         }
         // We cannot check the counterparty connection_id because it is not exposed to the contract
+        debug(store, format!("{}-{}", "address".to_string(), self.address))?;
         if !self.address.is_empty() {
             validate_ica_address(&self.address)?;
         }
+        debug(store, format!("{}-{}", "tx_type".to_string(), self.tx_type))?;
         if self.tx_type != "sdk_multi_msg" {
             return Err(ContractError::UnsupportedTxType(self.tx_type.clone()));
         }
